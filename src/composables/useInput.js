@@ -1,4 +1,4 @@
-import { computed, ref, watch, nextTick } from 'vue';
+import { computed, ref, watch, nextTick, onMounted } from 'vue';
 
 export function useInput(props, emit) {
     const isReallyFocused = ref(false);
@@ -243,6 +243,14 @@ export function useInput(props, emit) {
     function selectInput() {
         if (inputRef.value) inputRef.value.select();
     }
+
+    onMounted(() => {
+        if (!props.content?.autofocus) return;
+        /* wwEditor:start */
+        if (props.wwEditorState?.editMode === wwLib.wwEditorHelper.EDIT_MODES.EDITION) return;
+        /* wwEditor:end */
+        nextTick(() => focusInput());
+    });
 
     watch(isReallyFocused, (isFocused, wasFocused) => {
         if (isFocused && !wasFocused) {

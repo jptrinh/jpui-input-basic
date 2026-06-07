@@ -17,6 +17,7 @@ export default {
             'required',
             'invalid',
             'autocomplete',
+            'autofocus',
             'debounce',
             'debounceDelay',
         ],
@@ -402,6 +403,22 @@ export default {
             bindingValidation: {
                 type: 'boolean',
                 tooltip: 'A boolean that defines if the autocomplete is activated: `true | false`',
+            },
+            /* wwEditor:end */
+        },
+        autofocus: {
+            label: { en: 'Autofocus', fr: 'Mise au point automatique' },
+            type: 'OnOff',
+            section: 'settings',
+            defaultValue: false,
+            bindable: true,
+            /* wwEditor:start */
+            bindingValidation: {
+                type: 'boolean',
+                tooltip: 'A boolean that defines if the input should automatically receive focus when the page loads: `true | false`',
+            },
+            propertyHelp: {
+                tooltip: 'When enabled, this input automatically receives focus when the page is loaded (ignored in the editor and for readonly/disabled inputs).',
             },
             /* wwEditor:end */
         },
