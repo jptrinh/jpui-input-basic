@@ -45,7 +45,12 @@
         v-bind="textareaBindings"
         class="ww-input-basic"
         :class="{ editing: isEditing }"
-        @input="handleManualInput"
+        @input="
+            event => {
+                handleManualInput(event);
+                resizeTextarea();
+            }
+        "
         @focus="onFocus"
         @blur="onBlur"
         @keyup.enter="onEnter"
@@ -68,6 +73,7 @@
 import { computed, inject, watch, nextTick, ref } from 'vue';
 import { useInput } from './composables/useInput';
 import { useCurrency } from './composables/useCurrency';
+import { useAutoGrow } from './composables/useAutoGrow';
 /* wwEditor:start */
 import useParentSelection from './editor/useParentSelection';
 /* wwEditor:end */
@@ -126,6 +132,8 @@ export default {
             onFocus,
             setValue,
         } = useInput(props, emit);
+
+        const { resizeTextarea } = useAutoGrow(props, { inputRef, style, displayValue });
 
         // Get delay value for currency debouncing
         const delay = computed(() => wwLib.wwUtils.getLengthUnit(props.content.debounceDelay)[0]);
@@ -526,7 +534,7 @@ export default {
             'aria-invalid': isInvalid.value || undefined,
             placeholder: wwLib.wwLang.getText(props.content.placeholder),
             rows: props.content.rows,
-            style: [style.value, { resize: props.content.resize ? '' : 'none' }],
+            style: [style.value, { resize: props.content.resize && !props.content.autoGrow ? '' : 'none' }],
         }));
 
         const inputClasses = computed(() => ({
@@ -641,6 +649,7 @@ export default {
             max,
             stepAttribute,
             handleManualInput,
+            resizeTextarea,
             focusInput,
             selectInput,
             onBlur,

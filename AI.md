@@ -12,6 +12,7 @@ keywords:
   - decimal precision
   - time precision
   - textarea resize
+  - textarea auto grow
   - debounce input
   - currency input
   - currency formatting
@@ -34,7 +35,9 @@ Properties:
 - timePrecision: 3600|60|1|0.1 - Time input precision. Default: 1
 - placeholder: string|number - Placeholder text. Default: {}
 - rows: number - Textarea rows (1-25). Default: 4
-- resize: boolean - Textarea resizable. Default: false
+- autoGrow: boolean - Grow the textarea to fit its content. Default: false
+- maxRows: number - Max rows before scrolling when autoGrow is on, 0 for no limit (0-50). Default: 0
+- resize: boolean - Textarea resizable. Ignored when autoGrow is on. Default: false
 - min: number - Min value (0-100). Default: 0
 - max: number - Max value (0-10000). Default: 10000
 - minDate: string - Min date (yyyy-mm-dd). Default: ""

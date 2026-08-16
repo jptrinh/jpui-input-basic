@@ -34,6 +34,8 @@ export default {
                 'hideArrows',
                 'displayPassword',
                 'rows',
+                'autoGrow',
+                'maxRows',
                 'resize',
                 'currencyShowSymbol',
                 'currencySymbol',
@@ -298,10 +300,46 @@ export default {
             defaultValue: 4,
             classes: true,
         },
+        autoGrow: {
+            label: { en: 'Auto grow', fr: 'Auto grow' },
+            type: 'OnOff',
+            hidden: content => content.type !== 'textarea',
+            defaultValue: false,
+            bindable: true,
+            classes: true,
+            /* wwEditor:start */
+            bindingValidation: {
+                type: 'boolean',
+                tooltip: 'A boolean value: \n\n`true` or `false`',
+            },
+            propertyHelp: {
+                tooltip:
+                    'Grow the textarea to fit its content as the user types. "Rows" becomes the minimum height, and the height set in the style panel no longer applies.',
+            },
+            /* wwEditor:end */
+        },
+        maxRows: {
+            label: { en: 'Max rows', fr: 'Max rows' },
+            type: 'Number',
+            options: { min: 0, max: 50 },
+            hidden: content => content.type !== 'textarea' || !content.autoGrow,
+            defaultValue: 0,
+            bindable: true,
+            classes: true,
+            /* wwEditor:start */
+            bindingValidation: {
+                type: 'number',
+                tooltip: 'A number that defines the maximum number of rows before scrolling: `10`',
+            },
+            propertyHelp: {
+                tooltip: 'Stop growing past this many rows and scroll instead. Set to 0 to grow without a limit.',
+            },
+            /* wwEditor:end */
+        },
         resize: {
             label: { en: 'Resize', fr: 'Resize' },
             type: 'OnOff',
-            hidden: content => content.type !== 'textarea',
+            hidden: content => content.type !== 'textarea' || content.autoGrow,
             defaultValue: false,
             classes: true,
         },
