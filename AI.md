@@ -72,6 +72,7 @@ Variables:
 
 Features:
 - You can fully stylize the input by adding borders, background, hover state, etc...
+- With autoGrow on, the textarea height follows its content. rows sets the minimum height, maxRows caps it (it scrolls past that), and the height set in the style panel no longer applies.
 
 Example:
 <elements>

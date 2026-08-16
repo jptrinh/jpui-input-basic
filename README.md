@@ -13,10 +13,13 @@ To serve locally, run `npm run serve --port=[PORT]`, and then go to Weweb editor
 
 ## Build
 
-Before release, you can check build error by running `npm run build --name="ww-form-input" --type="element"`
+Before release, you can check build error by running `npx weweb build name="ww-input-basic" type="wwobject"`.
+
+Note that the CLI reads bare `name=` / `type=` arguments, so the dash-prefixed form (`--name=...`) fails with `arg 'name="name"' not specified`.
 
 ## Changelog
 
+- 17/08/2026 - Add textarea auto grow, with an optional max rows cap
 - 17/05/2026 - Add invalid state
 - 17/05/2026 - Add disabled state
 - 17/05/2026 - Add File type
