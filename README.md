@@ -19,7 +19,11 @@ Note that the CLI reads bare `name=` / `type=` arguments, so the dash-prefixed f
 
 ## Changelog
 
+- 19/08/2026 - Keep a disabled input selectable on the editor canvas
+- 19/08/2026 - Size the auto-grow textarea with CSS (`field-sizing`), bounded by the min/max height in the style panel — replaces the max rows cap
 - 17/08/2026 - Add textarea auto grow, with an optional max rows cap
+- 07/06/2026 - Add autofocus
+- 25/05/2026 - Add vertical resize for textarea
 - 17/05/2026 - Add invalid state
 - 17/05/2026 - Add disabled state
 - 17/05/2026 - Add File type
