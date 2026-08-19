@@ -44,13 +44,8 @@
         ref="inputRef"
         v-bind="textareaBindings"
         class="ww-input-basic"
-        :class="{ editing: isEditing }"
-        @input="
-            event => {
-                handleManualInput(event);
-                resizeTextarea();
-            }
-        "
+        :class="{ editing: isEditing, 'auto-grow': content?.autoGrow }"
+        @input="handleManualInput"
         @focus="onFocus"
         @blur="onBlur"
         @keyup.enter="onEnter"
@@ -73,7 +68,6 @@
 import { computed, inject, watch, nextTick, ref } from 'vue';
 import { useInput } from './composables/useInput';
 import { useCurrency } from './composables/useCurrency';
-import { useAutoGrow } from './composables/useAutoGrow';
 /* wwEditor:start */
 import useParentSelection from './editor/useParentSelection';
 /* wwEditor:end */
@@ -132,8 +126,6 @@ export default {
             onFocus,
             setValue,
         } = useInput(props, emit);
-
-        const { resizeTextarea } = useAutoGrow(props, { inputRef, style, displayValue });
 
         // Get delay value for currency debouncing
         const delay = computed(() => wwLib.wwUtils.getLengthUnit(props.content.debounceDelay)[0]);
@@ -649,7 +641,6 @@ export default {
             max,
             stepAttribute,
             handleManualInput,
-            resizeTextarea,
             focusInput,
             selectInput,
             onBlur,
@@ -770,6 +761,13 @@ export default {
 
     &[type='textarea'] {
         resize: vertical;
+    }
+
+    // Sized by the browser between the min/max height set in the style panel.
+    // `!important` beats the height WeWeb applies inline on the element.
+    &.auto-grow {
+        field-sizing: content;
+        height: auto !important;
     }
 }
 </style>

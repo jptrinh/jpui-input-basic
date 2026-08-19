@@ -35,7 +35,6 @@ export default {
                 'displayPassword',
                 'rows',
                 'autoGrow',
-                'maxRows',
                 'resize',
                 'currencyShowSymbol',
                 'currencySymbol',
@@ -289,7 +288,7 @@ export default {
             label: { en: 'Rows', fr: 'Rows' },
             type: 'Number',
             options: { min: 1, max: 25 },
-            hidden: content => content.type !== 'textarea',
+            hidden: content => content.type !== 'textarea' || content.autoGrow,
             bindable: true,
             /* wwEditor:start */
             bindingValidation: {
@@ -314,25 +313,7 @@ export default {
             },
             propertyHelp: {
                 tooltip:
-                    'Grow the textarea to fit its content as the user types. "Rows" becomes the minimum height, and the height set in the style panel no longer applies.',
-            },
-            /* wwEditor:end */
-        },
-        maxRows: {
-            label: { en: 'Max rows', fr: 'Max rows' },
-            type: 'Number',
-            options: { min: 0, max: 50 },
-            hidden: content => content.type !== 'textarea' || !content.autoGrow,
-            defaultValue: 0,
-            bindable: true,
-            classes: true,
-            /* wwEditor:start */
-            bindingValidation: {
-                type: 'number',
-                tooltip: 'A number that defines the maximum number of rows before scrolling: `10`',
-            },
-            propertyHelp: {
-                tooltip: 'Stop growing past this many rows and scroll instead. Set to 0 to grow without a limit.',
+                    'Grow the textarea to fit its content as the user types. Use the min height and max height in the style panel to bound how far it can grow. The fixed height and "Rows" no longer apply.',
             },
             /* wwEditor:end */
         },
