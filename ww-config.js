@@ -3,6 +3,11 @@ export default {
         type: 'ww-text',
         exclude: ['text'],
     },
+    css({ content }) {
+        if (!content.placeholderColor) return [];
+
+        return [{ property: '--placeholder-color', value: content.placeholderColor }];
+    },
     editor: {
         label: { en: 'Form Input', fr: 'Entrée de Formulaire' },
         icon: 'text-input',
@@ -35,7 +40,6 @@ export default {
                 'displayPassword',
                 'rows',
                 'autoGrow',
-                'maxRows',
                 'resize',
                 'currencyShowSymbol',
                 'currencySymbol',
@@ -64,7 +68,26 @@ export default {
             }));
         },
     },
-    states: ['focus', 'focus-visible', 'readonly', 'disabled', 'invalid'],
+    states: [
+        { label: 'focus', selector: '&:focus-within' },
+        // [FORK] focus-visible / disabled / invalid ported to the selector-based API.
+        // Two selectors each: the root is the input itself, except in currency mode
+        // where it is a wrapper div — hence the :has() variant.
+        { label: 'focus-visible', selectors: ['&:focus-visible', '&:has(:focus-visible)'] },
+        { label: 'readonly', selectors: ['&:read-only', '&:has(:read-only)'] },
+        // [FORK] `data-ww-disabled` mirrors `:disabled` while editing, where the real
+        // attribute is dropped so the element stays selectable on the canvas.
+        {
+            label: 'disabled',
+            selectors: [
+                '&:disabled',
+                '&:has(:disabled)',
+                '&[data-ww-disabled="true"]',
+                '&:has([data-ww-disabled="true"])',
+            ],
+        },
+        { label: 'invalid', selectors: ['&[aria-invalid="true"]', '&:has([aria-invalid="true"])'] },
+    ],
     actions: [{ label: 'Focus element', action: 'focusInput' }],
     triggerEvents: [
         { name: 'change', label: { en: 'On change' }, event: { value: '' }, default: true },
@@ -289,7 +312,7 @@ export default {
             label: { en: 'Rows', fr: 'Rows' },
             type: 'Number',
             options: { min: 1, max: 25 },
-            hidden: content => content.type !== 'textarea',
+            hidden: content => content.type !== 'textarea' || content.autoGrow,
             bindable: true,
             /* wwEditor:start */
             bindingValidation: {
@@ -314,25 +337,7 @@ export default {
             },
             propertyHelp: {
                 tooltip:
-                    'Grow the textarea to fit its content as the user types. "Rows" becomes the minimum height, and the height set in the style panel no longer applies.',
-            },
-            /* wwEditor:end */
-        },
-        maxRows: {
-            label: { en: 'Max rows', fr: 'Max rows' },
-            type: 'Number',
-            options: { min: 0, max: 50 },
-            hidden: content => content.type !== 'textarea' || !content.autoGrow,
-            defaultValue: 0,
-            bindable: true,
-            classes: true,
-            /* wwEditor:start */
-            bindingValidation: {
-                type: 'number',
-                tooltip: 'A number that defines the maximum number of rows before scrolling: `10`',
-            },
-            propertyHelp: {
-                tooltip: 'Stop growing past this many rows and scroll instead. Set to 0 to grow without a limit.',
+                    'Grow the textarea to fit its content as the user types. Use the min height and max height in the style panel to bound how far it can grow. The fixed height and "Rows" no longer apply.',
             },
             /* wwEditor:end */
         },

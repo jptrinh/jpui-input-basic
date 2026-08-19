@@ -9,7 +9,7 @@
                 v-if="showCurrencySymbol"
                 ref="currencySymbolRef"
                 class="currency-symbol"
-                :style="[currencySymbolStyle, { padding: style.padding }]"
+                :style="currencySymbolStyle"
             >
                 {{ currencySymbol }}
             </span>
@@ -44,13 +44,8 @@
         ref="inputRef"
         v-bind="textareaBindings"
         class="ww-input-basic"
-        :class="{ editing: isEditing }"
-        @input="
-            event => {
-                handleManualInput(event);
-                resizeTextarea();
-            }
-        "
+        :class="{ editing: isEditing, 'auto-grow': content?.autoGrow }"
+        @input="handleManualInput"
         @focus="onFocus"
         @blur="onBlur"
         @keyup.enter="onEnter"
@@ -73,7 +68,6 @@
 import { computed, inject, watch, nextTick, ref } from 'vue';
 import { useInput } from './composables/useInput';
 import { useCurrency } from './composables/useCurrency';
-import { useAutoGrow } from './composables/useAutoGrow';
 /* wwEditor:start */
 import useParentSelection from './editor/useParentSelection';
 /* wwEditor:end */
@@ -92,8 +86,6 @@ export default {
     emits: [
         'element-event',
         'trigger-event',
-        'add-state',
-        'remove-state',
         'update:content:effect',
         'update:sidepanel-content',
     ],
@@ -121,7 +113,6 @@ export default {
             isReadonly,
             isDisabled,
             isInvalid,
-            style,
             min,
             max,
             stepAttribute,
@@ -132,8 +123,6 @@ export default {
             onFocus,
             setValue,
         } = useInput(props, emit);
-
-        const { resizeTextarea } = useAutoGrow(props, { inputRef, style, displayValue });
 
         // Get delay value for currency debouncing
         const delay = computed(() => wwLib.wwUtils.getLengthUnit(props.content.debounceDelay)[0]);
@@ -505,6 +494,13 @@ export default {
             { elementState: props.wwElementState, emit, sidepanelFormPath: 'form', setValue }
         );
 
+        // [FORK] A real `disabled` attribute swallows mouse events, so a disabled input
+        // cannot be selected on the editor canvas. While editing, mark it with
+        // `data-ww-disabled` instead (the `disabled` state selectors match it too) and
+        // rely on the readonly attribute already forced by `isEditing` to block input.
+        const disabledAttribute = computed(() => isDisabled.value && !isEditing.value);
+        const disabledDataAttribute = computed(() => (isDisabled.value ? 'true' : undefined));
+
         const inputBindings = computed(() => ({
             ...props.wwElementState.props.attributes,
             key: 'ww-input-basic-' + step.value,
@@ -512,12 +508,12 @@ export default {
             type: inputType.value,
             name: props.wwElementState.name,
             readonly: isReadonly.value || isEditing.value,
-            disabled: isDisabled.value,
+            disabled: disabledAttribute.value,
+            'data-ww-disabled': disabledDataAttribute.value,
             required: props.content.required,
             'aria-invalid': isInvalid.value || undefined,
             autocomplete: props.content.autocomplete ? 'on' : 'off',
             placeholder: wwLib.wwLang.getText(props.content.placeholder),
-            style: style.value,
             min: min.value,
             max: max.value,
             step: stepAttribute.value,
@@ -529,12 +525,14 @@ export default {
             type: props.content.type,
             name: props.wwElementState.name,
             readonly: isReadonly.value || isEditing.value,
-            disabled: isDisabled.value,
+            disabled: disabledAttribute.value,
+            'data-ww-disabled': disabledDataAttribute.value,
             required: props.content.required,
             'aria-invalid': isInvalid.value || undefined,
             placeholder: wwLib.wwLang.getText(props.content.placeholder),
             rows: props.content.rows,
-            style: [style.value, { resize: props.content.resize && !props.content.autoGrow ? '' : 'none' }],
+            // [FORK] keep resize off while auto-grow sizes the textarea
+            style: { resize: props.content.resize && !props.content.autoGrow ? '' : 'none' },
         }));
 
         const inputClasses = computed(() => ({
@@ -643,13 +641,11 @@ export default {
             isReadonly,
             isDisabled,
             isInvalid,
-            style,
             isEditing,
             min,
             max,
             stepAttribute,
             handleManualInput,
-            resizeTextarea,
             focusInput,
             selectInput,
             onBlur,
@@ -705,6 +701,9 @@ export default {
     border: none;
     position: relative;
     isolation: isolate;
+    overflow: var(--ww-text-overflow, initial);
+    text-overflow: var(--ww-text-text-overflow, initial);
+    white-space: var(--ww-text-white-space, initial);
 
     &::placeholder {
         color: var(--placeholder-color, #000000ad);
@@ -747,6 +746,14 @@ export default {
     }
 
     /* wwEditor:start */
+    /* [FORK] disabled while editing: keep the cursor hint but stay clickable so the
+       element can still be selected on the canvas */
+    &[data-ww-disabled='true'] {
+        cursor: not-allowed;
+    }
+    /* wwEditor:end */
+
+    /* wwEditor:start */
     &.editing {
         cursor: initial !important;
     }
@@ -754,7 +761,18 @@ export default {
 
     &.currency-type {
         background-color: transparent;
+        color: inherit;
+        font: inherit;
+        letter-spacing: inherit;
+        line-height: inherit;
+        text-align: inherit;
+        text-decoration: inherit;
+        text-decoration-color: inherit;
+        text-decoration-style: inherit;
+        text-shadow: inherit;
+        text-transform: inherit;
         width: 100%;
+        word-spacing: inherit;
     }
 
     &[type='file']::file-selector-button {
@@ -770,6 +788,13 @@ export default {
 
     &[type='textarea'] {
         resize: vertical;
+    }
+
+    // Sized by the browser between the min/max height set in the style panel.
+    // `!important` beats the height WeWeb applies inline on the element.
+    &.auto-grow {
+        field-sizing: content;
+        height: auto !important;
     }
 }
 </style>

@@ -2,7 +2,6 @@ import { computed, ref, watch, nextTick, onMounted } from 'vue';
 
 export function useInput(props, emit) {
     const isReallyFocused = ref(false);
-    const realFocusVisible = ref(false);
     const isDebouncing = ref(false);
     const inputRef = ref(null);
     let debounceTimeout = null;
@@ -117,15 +116,6 @@ export function useInput(props, emit) {
             : props.wwElementState.props.invalid;
     });
 
-    const style = computed(() => {
-        const computedStyle = {
-            ...wwLib.wwUtils.getTextStyleFromContent(props.content),
-            '--placeholder-color': props.content.placeholderColor,
-        };
-        delete computedStyle['whiteSpaceCollapse'];
-        delete computedStyle['whiteSpace'];
-        return computedStyle;
-    });
 
     const min = computed(() => {
         if (type.value === 'date') {
@@ -225,14 +215,10 @@ export function useInput(props, emit) {
     function onBlur(event) {
         correctDecimalValue(event);
         isReallyFocused.value = false;
-        realFocusVisible.value = false;
     }
 
     function onFocus() {
         isReallyFocused.value = true;
-        nextTick(() => {
-            realFocusVisible.value = inputRef.value?.matches(':focus-visible') ?? false;
-        });
     }
 
     function focusInput() {
@@ -269,79 +255,6 @@ export function useInput(props, emit) {
         return isReallyFocused.value;
     });
 
-    watch(
-        isFocused,
-        value => {
-            if (value) {
-                emit('add-state', 'focus');
-            } else {
-                emit('remove-state', 'focus');
-            }
-        },
-        {
-            immediate: true,
-        }
-    );
-
-    watch(
-        isReadonly,
-        value => {
-            if (value) {
-                emit('add-state', 'readonly');
-            } else {
-                emit('remove-state', 'readonly');
-            }
-        },
-        {
-            immediate: true,
-        }
-    );
-
-    watch(
-        isDisabled,
-        value => {
-            if (value) {
-                emit('add-state', 'disabled');
-            } else {
-                emit('remove-state', 'disabled');
-            }
-        },
-        { immediate: true }
-    );
-
-    watch(
-        isInvalid,
-        value => {
-            if (value) {
-                emit('add-state', 'invalid');
-            } else {
-                emit('remove-state', 'invalid');
-            }
-        },
-        { immediate: true }
-    );
-
-    const isFocusVisible = computed(() => {
-        /* wwEditor:start */
-        if (props.wwEditorState.isSelected) {
-            return props.wwElementState.states.includes('focus-visible');
-        }
-        /* wwEditor:end */
-        return realFocusVisible.value;
-    });
-
-    watch(
-        isFocusVisible,
-        value => {
-            if (value) {
-                emit('add-state', 'focus-visible');
-            } else {
-                emit('remove-state', 'focus-visible');
-            }
-        },
-        { immediate: true }
-    );
-
     /* wwEditor:start */
     watch(
         () => props.content.precision,
@@ -367,7 +280,6 @@ export function useInput(props, emit) {
         isReadonly,
         isDisabled,
         isInvalid,
-        style,
         min,
         max,
         stepAttribute,
@@ -377,7 +289,6 @@ export function useInput(props, emit) {
         onBlur,
         onFocus,
         isFocused,
-        isFocusVisible,
         setValue,
     };
 }
