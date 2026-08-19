@@ -3,6 +3,11 @@ export default {
         type: 'ww-text',
         exclude: ['text'],
     },
+    css({ content }) {
+        if (!content.placeholderColor) return [];
+
+        return [{ property: '--placeholder-color', value: content.placeholderColor }];
+    },
     editor: {
         label: { en: 'Form Input', fr: 'Entrée de Formulaire' },
         icon: 'text-input',
@@ -63,7 +68,16 @@ export default {
             }));
         },
     },
-    states: ['focus', 'focus-visible', 'readonly', 'disabled', 'invalid'],
+    states: [
+        { label: 'focus', selector: '&:focus-within' },
+        // [FORK] focus-visible / disabled / invalid ported to the selector-based API.
+        // Two selectors each: the root is the input itself, except in currency mode
+        // where it is a wrapper div — hence the :has() variant.
+        { label: 'focus-visible', selectors: ['&:focus-visible', '&:has(:focus-visible)'] },
+        { label: 'readonly', selectors: ['&:read-only', '&:has(:read-only)'] },
+        { label: 'disabled', selectors: ['&:disabled', '&:has(:disabled)'] },
+        { label: 'invalid', selectors: ['&[aria-invalid="true"]', '&:has([aria-invalid="true"])'] },
+    ],
     actions: [{ label: 'Focus element', action: 'focusInput' }],
     triggerEvents: [
         { name: 'change', label: { en: 'On change' }, event: { value: '' }, default: true },
