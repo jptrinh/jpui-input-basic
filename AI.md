@@ -34,9 +34,8 @@ Properties:
 - step: number - Number input step. Default: 1
 - timePrecision: 3600|60|1|0.1 - Time input precision. Default: 1
 - placeholder: string|number - Placeholder text. Default: {}
-- rows: number - Textarea rows (1-25). Default: 4
-- autoGrow: boolean - Grow the textarea to fit its content. Default: false
-- maxRows: number - Max rows before scrolling when autoGrow is on, 0 for no limit (0-50). Default: 0
+- rows: number - Textarea rows (1-25). Ignored when autoGrow is on. Default: 4
+- autoGrow: boolean - Grow the textarea to fit its content, bounded by the min height and max height set in the style panel. Default: false
 - resize: boolean - Textarea resizable. Ignored when autoGrow is on. Default: false
 - min: number - Min value (0-100). Default: 0
 - max: number - Max value (0-10000). Default: 10000
@@ -72,7 +71,7 @@ Variables:
 
 Features:
 - You can fully stylize the input by adding borders, background, hover state, etc...
-- With autoGrow on, the textarea height follows its content. rows sets the minimum height, maxRows caps it (it scrolls past that), and the height set in the style panel no longer applies.
+- With autoGrow on, the textarea height follows its content. Bound it with the min height and max height in the style panel (it scrolls past the max); the fixed height and rows no longer apply.
 
 Example:
 <elements>
