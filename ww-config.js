@@ -75,7 +75,17 @@ export default {
         // where it is a wrapper div — hence the :has() variant.
         { label: 'focus-visible', selectors: ['&:focus-visible', '&:has(:focus-visible)'] },
         { label: 'readonly', selectors: ['&:read-only', '&:has(:read-only)'] },
-        { label: 'disabled', selectors: ['&:disabled', '&:has(:disabled)'] },
+        // [FORK] `data-ww-disabled` mirrors `:disabled` while editing, where the real
+        // attribute is dropped so the element stays selectable on the canvas.
+        {
+            label: 'disabled',
+            selectors: [
+                '&:disabled',
+                '&:has(:disabled)',
+                '&[data-ww-disabled="true"]',
+                '&:has([data-ww-disabled="true"])',
+            ],
+        },
         { label: 'invalid', selectors: ['&[aria-invalid="true"]', '&:has([aria-invalid="true"])'] },
     ],
     actions: [{ label: 'Focus element', action: 'focusInput' }],

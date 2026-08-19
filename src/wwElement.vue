@@ -494,6 +494,13 @@ export default {
             { elementState: props.wwElementState, emit, sidepanelFormPath: 'form', setValue }
         );
 
+        // [FORK] A real `disabled` attribute swallows mouse events, so a disabled input
+        // cannot be selected on the editor canvas. While editing, mark it with
+        // `data-ww-disabled` instead (the `disabled` state selectors match it too) and
+        // rely on the readonly attribute already forced by `isEditing` to block input.
+        const disabledAttribute = computed(() => isDisabled.value && !isEditing.value);
+        const disabledDataAttribute = computed(() => (isDisabled.value ? 'true' : undefined));
+
         const inputBindings = computed(() => ({
             ...props.wwElementState.props.attributes,
             key: 'ww-input-basic-' + step.value,
@@ -501,7 +508,8 @@ export default {
             type: inputType.value,
             name: props.wwElementState.name,
             readonly: isReadonly.value || isEditing.value,
-            disabled: isDisabled.value,
+            disabled: disabledAttribute.value,
+            'data-ww-disabled': disabledDataAttribute.value,
             required: props.content.required,
             'aria-invalid': isInvalid.value || undefined,
             autocomplete: props.content.autocomplete ? 'on' : 'off',
@@ -517,7 +525,8 @@ export default {
             type: props.content.type,
             name: props.wwElementState.name,
             readonly: isReadonly.value || isEditing.value,
-            disabled: isDisabled.value,
+            disabled: disabledAttribute.value,
+            'data-ww-disabled': disabledDataAttribute.value,
             required: props.content.required,
             'aria-invalid': isInvalid.value || undefined,
             placeholder: wwLib.wwLang.getText(props.content.placeholder),
@@ -735,6 +744,14 @@ export default {
         pointer-events: none;
         cursor: not-allowed;
     }
+
+    /* wwEditor:start */
+    /* [FORK] disabled while editing: keep the cursor hint but stay clickable so the
+       element can still be selected on the canvas */
+    &[data-ww-disabled='true'] {
+        cursor: not-allowed;
+    }
+    /* wwEditor:end */
 
     /* wwEditor:start */
     &.editing {
