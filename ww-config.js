@@ -40,6 +40,7 @@ export default {
                 'displayPassword',
                 'rows',
                 'autoGrow',
+                'autoGrowMinHeight',
                 'resize',
                 'currencyShowSymbol',
                 'currencySymbol',
@@ -337,7 +338,37 @@ export default {
             },
             propertyHelp: {
                 tooltip:
-                    'Grow the textarea to fit its content as the user types. Use the min height and max height in the style panel to bound how far it can grow. The fixed height and "Rows" no longer apply.',
+                    'Grow the textarea to fit its content as the user types. "Min height" sets its starting size and the max height in the style panel bounds how far it can grow. The fixed height and "Rows" no longer apply.',
+            },
+            /* wwEditor:end */
+        },
+        autoGrowMinHeight: {
+            label: { en: 'Min height', fr: 'Hauteur min' },
+            type: 'Length',
+            section: 'style',
+            options: {
+                unitChoices: [
+                    { value: 'px', label: 'px', min: 0, max: 1000 },
+                    { value: 'rem', label: 'rem', min: 0, max: 50 },
+                    { value: 'em', label: 'em', min: 0, max: 50 },
+                ],
+                noRange: true,
+                useVar: true,
+            },
+            hidden: content => content.type !== 'textarea' || !content.autoGrow,
+            defaultValue: '80px',
+            bindable: true,
+            responsive: true,
+            states: true,
+            classes: true,
+            /* wwEditor:start */
+            bindingValidation: {
+                type: 'string',
+                tooltip: 'A CSS length with its unit: `"80px"`, `"5rem"`',
+            },
+            propertyHelp: {
+                tooltip:
+                    'The height the textarea starts at before it grows. Replaces "Rows" when auto grow is enabled.',
             },
             /* wwEditor:end */
         },
