@@ -19,6 +19,7 @@ Note that the CLI reads bare `name=` / `type=` arguments, so the dash-prefixed f
 
 ## Changelog
 
+- 20/08/2026 - Make the textarea resize property bindable, and add a bindable min height that replaces "Rows" when auto grow is on
 - 17/08/2026 - Add textarea auto grow, with an optional max rows cap
 - 17/05/2026 - Add invalid state
 - 17/05/2026 - Add disabled state

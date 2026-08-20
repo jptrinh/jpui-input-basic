@@ -530,9 +530,16 @@ export default {
             required: props.content.required,
             'aria-invalid': isInvalid.value || undefined,
             placeholder: wwLib.wwLang.getText(props.content.placeholder),
-            rows: props.content.rows,
-            // [FORK] keep resize off while auto-grow sizes the textarea
-            style: { resize: props.content.resize && !props.content.autoGrow ? '' : 'none' },
+            // [FORK] auto-grow sizes the textarea itself, so "Rows" no longer applies
+            rows: props.content?.autoGrow ? undefined : props.content.rows,
+            style: {
+                // [FORK] keep resize off while auto-grow sizes the textarea
+                resize: props.content?.resize && !props.content?.autoGrow ? '' : 'none',
+                // [FORK] min height replaces "Rows" as the starting size when auto-growing
+                ...(props.content?.autoGrow && props.content?.autoGrowMinHeight
+                    ? { minHeight: props.content.autoGrowMinHeight }
+                    : {}),
+            },
         }));
 
         const inputClasses = computed(() => ({
