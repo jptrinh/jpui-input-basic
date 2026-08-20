@@ -346,7 +346,17 @@ export default {
             type: 'OnOff',
             hidden: content => content.type !== 'textarea' || content.autoGrow,
             defaultValue: false,
+            bindable: true,
             classes: true,
+            /* wwEditor:start */
+            bindingValidation: {
+                type: 'boolean',
+                tooltip: 'A boolean value: \n\n`true` or `false`',
+            },
+            propertyHelp: {
+                tooltip: 'Allow the user to resize the textarea vertically. Ignored when auto grow is enabled.',
+            },
+            /* wwEditor:end */
         },
         min: {
             label: { en: 'Min number', fr: 'Min number' },

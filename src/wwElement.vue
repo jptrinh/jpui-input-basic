@@ -532,7 +532,7 @@ export default {
             placeholder: wwLib.wwLang.getText(props.content.placeholder),
             rows: props.content.rows,
             // [FORK] keep resize off while auto-grow sizes the textarea
-            style: { resize: props.content.resize && !props.content.autoGrow ? '' : 'none' },
+            style: { resize: props.content?.resize && !props.content?.autoGrow ? '' : 'none' },
         }));
 
         const inputClasses = computed(() => ({
