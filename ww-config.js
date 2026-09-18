@@ -23,6 +23,7 @@ export default {
             'invalid',
             'autocomplete',
             'autofocus',
+            'submitOnEnter',
             'debounce',
             'debounceDelay',
         ],
@@ -503,6 +504,23 @@ export default {
             },
             propertyHelp: {
                 tooltip: 'When enabled, this input automatically receives focus when the page is loaded (ignored in the editor and for readonly/disabled inputs).',
+            },
+            /* wwEditor:end */
+        },
+        submitOnEnter: {
+            label: { en: 'Submit form on Enter' },
+            type: 'OnOff',
+            section: 'settings',
+            defaultValue: true,
+            bindable: true,
+            hidden: content => content?.type === 'textarea',
+            /* wwEditor:start */
+            bindingValidation: {
+                type: 'boolean',
+                tooltip: 'A boolean that defines if pressing Enter submits the parent form: `true | false`',
+            },
+            propertyHelp: {
+                tooltip: 'Inside a form, pressing Enter submits it. Turn off when Enter should do something else (pick a suggestion…): the submit is blocked and "On enter key" fires on key down instead of key up.',
             },
             /* wwEditor:end */
         },

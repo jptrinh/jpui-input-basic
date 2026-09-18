@@ -372,6 +372,12 @@
             "description": "Focus the input when the component mounts.",
             "type": "boolean",
             "defaultValue": false
+        },
+        {
+            "name": "submitOnEnter",
+            "description": "When true (default), pressing Enter inside a parent form submits it. When false, the submit is blocked and onEnterKey fires on key down instead of key up. Inactive when type is 'textarea'.",
+            "type": "boolean",
+            "defaultValue": true
         }
     ],
     "states": [

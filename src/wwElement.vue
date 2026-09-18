@@ -35,7 +35,8 @@
                         onCurrencyFocus();
                     }
                 "
-                @keyup.enter="onEnter"
+                @keydown.enter="onEnterKeydown"
+                @keyup.enter="onEnterKeyup"
             />
         </div>
     </div>
@@ -60,7 +61,8 @@
         @blur="onBlur"
         @focus="onFocus"
         @click="handleColorInputClick"
-        @keyup.enter="onEnter"
+        @keydown.enter="onEnterKeydown"
+        @keyup.enter="onEnterKeyup"
     />
 </template>
 
@@ -553,6 +555,22 @@ export default {
             emit('trigger-event', { name: 'onEnterKey', event: { value: variableValue.value } });
         }
 
+        // Inside a form, the browser submits on keydown, before keyup ever fires. With
+        // "Submit form on Enter" off, block that submit and emit On enter key here instead,
+        // while the input still has focus.
+        const submitsOnEnter = computed(() => props.content?.submitOnEnter ?? true);
+
+        function onEnterKeydown(event) {
+            if (submitsOnEnter.value || event?.isComposing) return;
+            event?.preventDefault?.();
+            onEnter();
+        }
+
+        function onEnterKeyup(event) {
+            if (!submitsOnEnter.value || event?.isComposing) return;
+            onEnter();
+        }
+
         function handleColorInputClick(event) {
             // Prevent color picker from opening when input is readonly (either from isReadonly or isEditing)
             if (props.content.type === 'color' && (isReadonly.value || isEditing.value)) {
@@ -664,6 +682,8 @@ export default {
             textareaBindings,
             inputClasses,
             onEnter,
+            onEnterKeydown,
+            onEnterKeyup,
             handleColorInputClick,
             // Currency-related
             handleCurrencyInput,
