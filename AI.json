@@ -1,6 +1,6 @@
 {
     "metadata": {
-        "name": "ww-input-basic",
+        "name": "jpui-input-basic",
         "description": "A versatile form input element supporting text, email, password, number, decimal, date, time, phone, color, and currency types with validation.",
         "keywords": [
             "input",
