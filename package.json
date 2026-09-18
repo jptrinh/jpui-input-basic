@@ -1,8 +1,8 @@
 {
-    "name": "ww-form-input",
+    "name": "jpui-input-basic",
     "repository": {
         "type": "git",
-        "url": "https://github.com/weweb-assets/ww-form-input"
+        "url": "https://github.com/jptrinh/jpui-input-basic"
     },
     "version": "3.5.0",
     "scripts": {
